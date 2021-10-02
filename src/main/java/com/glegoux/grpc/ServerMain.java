@@ -1,6 +1,6 @@
-package com.glegoux.grpc
+package com.glegoux.grpc;
 
-public class Main {
+public class ServerMain {
 
     public static void main(String[] args) {
         System.out.println("Hello world!");
