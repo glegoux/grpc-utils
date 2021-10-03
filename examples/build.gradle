@@ -31,10 +31,14 @@ def protobufVersion = "3.17.2"
 def protocVersion = protobufVersion
 
 dependencies {
-    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
-    implementation "io.grpc:grpc-stub:${grpcVersion}"
-    implementation "io.grpc:grpc-services:${grpcVersion}"
-    runtimeOnly "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    // gRPC
+    implementation("io.grpc:grpc-protobuf:${grpcVersion}")
+    implementation("io.grpc:grpc-stub:${grpcVersion}")
+    implementation("io.grpc:grpc-services:${grpcVersion}")
+    runtimeOnly("io.grpc:grpc-netty-shaded:${grpcVersion}")
+    // monitoring
+    implementation("me.dinowernli:java-grpc-prometheus:0.3.0")
+    implementation("io.prometheus:simpleclient_httpserver:0.12.0")
 }
 
 protobuf {
