@@ -3,6 +3,7 @@
 # Build Tool - Gradle
 .gradle/
 build/
+out/
 
 # IDE - IntelliJ
 .idea/
