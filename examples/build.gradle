@@ -21,6 +21,9 @@ repositories {
 
 application {
     mainClass = "com.glegoux.grpc.examples.hello.HelloServer"
+    applicationDefaultJvmArgs = [
+            "-javaagent:./jmx-exporter/jmx_prometheus_javaagent-0.16.1.jar=8002:./jmx-exporter/jmx_prometheus_config.yml"
+    ]
 }
 
 def grpcVersion = "1.41.0"
