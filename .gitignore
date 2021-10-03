@@ -1,6 +1,7 @@
 # See https://git-scm.com/docs/gitignore
 
 # Build Tool - Gradle
+.gradle/
 build/
 
 # IDE - IntelliJ
