@@ -21,8 +21,9 @@ public class HelloServer {
   private HTTPServer monitoringServer;
 
   public static void main(String[] args) throws IOException, InterruptedException {
-    short port = 8000;
-    short monitoringPort = 8001;
+    HelloArguments arguments = new HelloArguments(args);
+    short port = arguments.getPort();
+    short monitoringPort = arguments.getMonitoringPort();
     final HelloServer server = new HelloServer();
     server.start(port, monitoringPort);
     server.blockUntilShutdown();

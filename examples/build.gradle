@@ -31,6 +31,8 @@ def protobufVersion = "3.17.2"
 def protocVersion = protobufVersion
 
 dependencies {
+    // command line parser
+    implementation("commons-cli:commons-cli:1.4")
     // gRPC
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
