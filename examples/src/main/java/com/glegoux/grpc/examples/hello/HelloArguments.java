@@ -18,21 +18,18 @@ class HelloArguments {
 
   HelloArguments(String[] args) {
     CommandLineParser parser = new DefaultParser();
-    HelpFormatter formatter = new HelpFormatter();
-    Options options = buildCommandLineOptions();
+    Options options = buildOptions();
     try {
       CommandLine cmd = parser.parse(options, args);
       if (cmd.hasOption("help")) {
-        String programName = "hello";
-        String description = String.format("Run a gRPC server%n%n");
-        formatter.printHelp(programName, description, options, null, true);
+        printUsage(options);
         System.exit(0);
       }
       if (cmd.hasOption("port")) {
         this.port = checkAndGetPort(cmd, "port");
       }
       if (cmd.hasOption("monitoring-port")) {
-        this.monitoringPort = checkAndGetPort(cmd,"monitoring-port");
+        this.monitoringPort = checkAndGetPort(cmd, "monitoring-port");
       }
     } catch (ParseException exception) {
       System.err.println(exception.getMessage());
@@ -48,7 +45,14 @@ class HelloArguments {
     return monitoringPort;
   }
 
-  private static Options buildCommandLineOptions() {
+  private static void printUsage(Options options) {
+    HelpFormatter formatter = new HelpFormatter();
+    String programName = "hello";
+    String description = String.format("Run a gRPC server%n%n");
+    formatter.printHelp(programName, description, options, null, true);
+  }
+
+  private static Options buildOptions() {
     Options options = new Options();
     Option help = new Option("h", "help", false, "print this message");
     Option port = Option.builder("p").longOpt("port")
@@ -63,7 +67,12 @@ class HelloArguments {
         .required(false)
         .type(Short.class)
         .argName("value")
-        .desc(String.format("monitoring server port for prometheus exporter of gRPC metrics (default: %d)", DEFAULT_MONITORING_PORT))
+        .desc(
+            String.format(
+                "monitoring server port for prometheus exporter of gRPC metrics (default: %d)",
+                DEFAULT_MONITORING_PORT
+            )
+        )
         .build();
     options.addOption(help);
     options.addOption(port);
