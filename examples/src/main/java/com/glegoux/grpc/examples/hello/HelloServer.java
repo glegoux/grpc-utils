@@ -5,6 +5,7 @@ import com.glegoux.examples.hello.HelloReply;
 import com.glegoux.examples.hello.HelloRequest;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.protobuf.services.HealthStatusManager;
 import io.grpc.protobuf.services.ProtoReflectionService;
 import io.grpc.stub.StreamObserver;
 import io.prometheus.client.exporter.HTTPServer;
@@ -36,8 +37,9 @@ public class HelloServer {
 
     server = ServerBuilder.forPort(port)
         .intercept(monitoringInterceptor)
-        .addService(new HelloImpl())
+        .addService(new HealthStatusManager().getHealthService())
         .addService(ProtoReflectionService.newInstance())
+        .addService(new HelloImpl())
         .build()
         .start();
 
