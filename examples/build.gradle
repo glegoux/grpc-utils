@@ -1,22 +1,17 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.13"
-    }
-}
-
 plugins {
     id "java"
     id "distribution"
     id "application"
-    id "com.google.protobuf" version "0.8.13"
     id "idea"
 }
 
 repositories {
     mavenCentral()
+}
+
+dependencies {
+    // gRPC Utils project
+    implementation project(path: ':grpc-utils')
 }
 
 application {
@@ -26,35 +21,10 @@ application {
     ]
 }
 
-def grpcVersion = "1.41.0"
-def protobufVersion = "3.17.2"
-def protocVersion = protobufVersion
-
-dependencies {
-    // command line parser
-    implementation("commons-cli:commons-cli:1.4")
-    // gRPC
-    implementation("io.grpc:grpc-protobuf:${grpcVersion}")
-    implementation("io.grpc:grpc-stub:${grpcVersion}")
-    implementation("io.grpc:grpc-services:${grpcVersion}")
-    runtimeOnly("io.grpc:grpc-netty-shaded:${grpcVersion}")
-    // monitoring
-    implementation("me.dinowernli:java-grpc-prometheus:0.3.0")
-    implementation("io.prometheus:simpleclient_httpserver:0.12.0")
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:${protocVersion}"
-    }
-
-    plugins {
-        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
-    }
-
-    generateProtoTasks {
-        all()*.plugins {
-            grpc {}
-        }
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.glegoux.grpc.examples.hello.HelloServer'
+        )
     }
 }

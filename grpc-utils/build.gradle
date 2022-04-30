@@ -1,0 +1,24 @@
+plugins {
+    id "java"
+    id 'java-library'
+    id "idea"
+}
+
+repositories {
+    mavenCentral()
+}
+
+def grpcVersion = "1.41.0"
+
+dependencies {
+    // command line parser
+    implementation("commons-cli:commons-cli:1.4")
+    // gRPC
+    implementation("io.grpc:grpc-protobuf:${grpcVersion}")
+    implementation("io.grpc:grpc-stub:${grpcVersion}")
+    implementation("io.grpc:grpc-services:${grpcVersion}")
+    runtimeOnly("io.grpc:grpc-netty-shaded:${grpcVersion}")
+    // monitoring
+    implementation("me.dinowernli:java-grpc-prometheus:0.3.0")
+    implementation("io.prometheus:simpleclient_httpserver:0.12.0")
+}
