@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public class gRPCServer {
+public class GrpcServerSimple implements GrpcServer {
 
-    private static final Logger logger = Logger.getLogger(gRPCServer.class.getName());
+    private static final Logger logger = Logger.getLogger(GrpcServerSimple.class.getName());
 
     private Server server;
     private HTTPServer monitoringServer;

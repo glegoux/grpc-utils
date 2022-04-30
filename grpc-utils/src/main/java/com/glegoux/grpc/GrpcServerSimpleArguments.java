@@ -2,7 +2,7 @@ package com.glegoux.grpc;
 
 import org.apache.commons.cli.*;
 
-public class gRPCServerArguments {
+public class GrpcServerSimpleArguments {
     private static final short DEFAULT_PORT = 8000;
     private static final short DEFAULT_MONITORING_PORT = 8001;
 
@@ -10,7 +10,7 @@ public class gRPCServerArguments {
     private short port = DEFAULT_PORT;
     private short monitoringPort = DEFAULT_MONITORING_PORT;
 
-    public gRPCServerArguments(String programName, String[] args) {
+    public GrpcServerSimpleArguments(String programName, String[] args) {
         this.programName = programName;
         CommandLineParser parser = new DefaultParser();
         Options options = buildOptions();
