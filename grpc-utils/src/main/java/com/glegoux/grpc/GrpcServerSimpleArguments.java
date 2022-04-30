@@ -47,7 +47,7 @@ public class GrpcServerSimpleArguments {
     private void printUsage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         String description = String.format("Run a gRPC server%n%n");
-        formatter.printHelp(programName, description, options, null, true);
+        formatter.printHelp(getProgramName(), description, options, null, true);
     }
 
     private Options buildOptions() {
