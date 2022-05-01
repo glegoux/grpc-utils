@@ -13,12 +13,12 @@ import java.util.logging.Logger;
 
 public class GrpcServerSimpleArguments {
     private static final Logger LOGGER = Logger.getLogger(GrpcServerSimple.class.getName());
-    private static final short DEFAULT_PORT = 8000;
-    private static final short DEFAULT_MONITORING_PORT = 8001;
+    private static final int DEFAULT_PORT = 8000;
+    private static final int DEFAULT_MONITORING_PORT = 8001;
 
     private final String programName;
-    private short port = DEFAULT_PORT;
-    private short monitoringPort = DEFAULT_MONITORING_PORT;
+    private int port = DEFAULT_PORT;
+    private int monitoringPort = DEFAULT_MONITORING_PORT;
 
     public GrpcServerSimpleArguments(String programName, String[] args) {
         this.programName = programName;
@@ -46,11 +46,11 @@ public class GrpcServerSimpleArguments {
         return programName;
     }
 
-    public short getPort() {
+    public int getPort() {
         return port;
     }
 
-    public short getMonitoringPort() {
+    public int getMonitoringPort() {
         return monitoringPort;
     }
 
@@ -77,16 +77,16 @@ public class GrpcServerSimpleArguments {
         return Option.builder().longOpt(name)
             .hasArg()
             .required(false)
-            .type(Short.class)
+            .type(Integer.class)
             .argName("value")
             .desc(desc)
             .build();
     }
 
-    private short checkAndGetPort(CommandLine cmd, String longOpt) throws ParseException {
+    private int checkAndGetPort(CommandLine cmd, String longOpt) throws ParseException {
         try {
-            Short port = (Short) cmd.getParsedOptionValue(longOpt);
-            if (port == null || !(1024 <= port))
+            Integer port = (Integer) cmd.getParsedOptionValue(longOpt);
+            if (port == null || !(1024 <= port && port <= 65535))
                 throw new ParseException(getExceptionMsg(cmd, longOpt));
         } catch (ClassCastException e) {
             throw new ParseException(getExceptionMsg(cmd, longOpt));        }

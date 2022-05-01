@@ -37,13 +37,14 @@ public class GrpcServerSimple implements GrpcServer {
         LOGGER.info("Monitoring server for gRPC metrics started, listening on " + monitoringPort);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            LOGGER.info("shutting down gRPC server since JVM is shutting down");
+            // Use stderr here since the logger may have been reset by its JVM shutdown hook.
+            System.err.println("Shutting down gRPC server since JVM is shutting down");
             try {
                 stop();
             } catch (InterruptedException e) {
-                LOGGER.warning(String.format("Server interrupted %s", e));
+                System.err.printf("Server interrupted %s%n", e);
             }
-            LOGGER.info("gRPC server shut down");
+            System.err.println("gRPC server shut down");
         }));
     }
 
@@ -64,8 +65,8 @@ public class GrpcServerSimple implements GrpcServer {
 
     public void run(String programName, String[] args) throws IOException, InterruptedException {
         GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
-        short port = arguments.getPort();
-        short monitoringPort = arguments.getMonitoringPort();
+        int port = arguments.getPort();
+        int monitoringPort = arguments.getMonitoringPort();
         final GrpcServerSimple server = new GrpcServerSimple();
         server.start(port, monitoringPort);
         server.blockUntilShutdown();
