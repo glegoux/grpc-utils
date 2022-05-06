@@ -1,9 +1,25 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath("com.google.protobuf:protobuf-gradle-plugin:0.8.18")
+    }
+}
+
 plugins {
     id "java"
-    id "distribution"
-    id "application"
+    id "com.google.protobuf" version "0.8.18"
     id "idea"
+    id "application"
+    id "distribution"
 }
+
+def grpcVersion = "1.46.0"
+def protobufVersion = "3.20.1"
+def protocVersion = protobufVersion
 
 repositories {
     mavenCentral()
@@ -12,6 +28,22 @@ repositories {
 dependencies {
     // gRPC Utils project
     implementation project(path: ':grpc-utils')
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+
+    plugins {
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
+    }
+
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
 }
 
 application {

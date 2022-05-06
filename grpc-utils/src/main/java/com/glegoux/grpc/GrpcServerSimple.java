@@ -1,5 +1,6 @@
 package com.glegoux.grpc;
 
+import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
@@ -9,6 +10,7 @@ import me.dinowernli.grpc.prometheus.Configuration;
 import me.dinowernli.grpc.prometheus.MonitoringServerInterceptor;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -19,16 +21,29 @@ public class GrpcServerSimple implements GrpcServer {
     private Server server;
     private HTTPServer monitoringServer;
 
+    private final List<BindableService> services;
+
+
+    public GrpcServerSimple(List<BindableService> services) {
+        this.services = services;
+    }
+
+    @Override
     public void start(int port, int monitoringPort) throws IOException {
 
         MonitoringServerInterceptor monitoringInterceptor = MonitoringServerInterceptor.create(Configuration.allMetrics());
 
-        server = ServerBuilder.forPort(port)
-            .intercept(monitoringInterceptor)
-            .addService(new HealthStatusManager().getHealthService())
-            .addService(ProtoReflectionService.newInstance())
-            .build()
-            .start();
+        ServerBuilder serverBuilder = ServerBuilder.forPort(port)
+                .intercept(monitoringInterceptor)
+                .addService(new HealthStatusManager().getHealthService())
+                .addService(ProtoReflectionService.newInstance());
+
+        for (BindableService service : services) {
+            serverBuilder.addService(service);
+        }
+
+        server = serverBuilder.build().start();
+
 
         LOGGER.info("gRPC server started, listening on " + port);
 
@@ -48,6 +63,7 @@ public class GrpcServerSimple implements GrpcServer {
         }));
     }
 
+    @Override
     public void stop() throws InterruptedException {
         if (server != null) {
             server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
@@ -57,19 +73,11 @@ public class GrpcServerSimple implements GrpcServer {
         }
     }
 
+    @Override
     public void blockUntilShutdown() throws InterruptedException {
         if (server != null) {
             server.awaitTermination();
         }
-    }
-
-    public void run(String programName, String[] args) throws IOException, InterruptedException {
-        GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
-        int port = arguments.getPort();
-        int monitoringPort = arguments.getMonitoringPort();
-        final GrpcServerSimple server = new GrpcServerSimple();
-        server.start(port, monitoringPort);
-        server.blockUntilShutdown();
     }
 
 }
