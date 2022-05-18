@@ -1,7 +1,8 @@
 package com.glegoux.grpc;
 
+import io.grpc.BindableService;
 import io.grpc.Server;
-import io.grpc.ServerBuilder;
+import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
 import io.grpc.protobuf.services.ProtoReflectionService;
 import io.prometheus.client.exporter.HTTPServer;
@@ -9,6 +10,7 @@ import me.dinowernli.grpc.prometheus.Configuration;
 import me.dinowernli.grpc.prometheus.MonitoringServerInterceptor;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -19,22 +21,36 @@ public class GrpcServerSimple implements GrpcServer {
     private Server server;
     private HTTPServer monitoringServer;
 
-    public void start(int port, int monitoringPort) throws IOException {
+    private final int port;
+    private final int monitoringPort;
+    private final List<BindableService> services;
+
+
+    public GrpcServerSimple(int port, int monitoringPort, List<BindableService> services) {
+        this.port = port;
+        this.monitoringPort = monitoringPort;
+        this.services = services;
+    }
+
+    @Override
+    public void start() throws IOException {
 
         MonitoringServerInterceptor monitoringInterceptor = MonitoringServerInterceptor.create(Configuration.allMetrics());
 
-        server = ServerBuilder.forPort(port)
-            .intercept(monitoringInterceptor)
-            .addService(new HealthStatusManager().getHealthService())
-            .addService(ProtoReflectionService.newInstance())
-            .build()
-            .start();
+        NettyServerBuilder serverBuilder = NettyServerBuilder.forPort(this.port)
+                .intercept(monitoringInterceptor)
+                .addService(new HealthStatusManager().getHealthService())
+                .addService(ProtoReflectionService.newInstance());
 
-        LOGGER.info("gRPC server started, listening on " + port);
+        this.services.forEach(serverBuilder::addService);
 
-        monitoringServer = new HTTPServer(monitoringPort);
+        this.server = serverBuilder.build().start();
 
-        LOGGER.info("Monitoring server for gRPC metrics started, listening on " + monitoringPort);
+        LOGGER.info("gRPC server started, listening on " + this.port);
+
+        this.monitoringServer = new HTTPServer(this.monitoringPort);
+
+        LOGGER.info("Monitoring server for gRPC metrics started, listening on " + this.monitoringPort);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             // Use stderr here since the logger may have been reset by its JVM shutdown hook.
@@ -48,28 +64,30 @@ public class GrpcServerSimple implements GrpcServer {
         }));
     }
 
+    @Override
     public void stop() throws InterruptedException {
-        if (server != null) {
-            server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
+        if (this.server != null) {
+            this.server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
         }
-        if (monitoringServer != null) {
-            monitoringServer.close();
+        if (this.monitoringServer != null) {
+            this.monitoringServer.close();
         }
     }
 
+    @Override
     public void blockUntilShutdown() throws InterruptedException {
-        if (server != null) {
-            server.awaitTermination();
+        if (this.server != null) {
+            this.server.awaitTermination();
         }
     }
 
-    public void run(String programName, String[] args) throws IOException, InterruptedException {
+    public static void run(String programName, String[] args, List<BindableService> services) throws IOException, InterruptedException {
         GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
         int port = arguments.getPort();
         int monitoringPort = arguments.getMonitoringPort();
-        final GrpcServerSimple server = new GrpcServerSimple();
-        server.start(port, monitoringPort);
-        server.blockUntilShutdown();
+        GrpcServerSimple grpcServerSimple = new GrpcServerSimple(port, monitoringPort, services);
+        grpcServerSimple.start();
+        grpcServerSimple.blockUntilShutdown();
     }
 
 }
