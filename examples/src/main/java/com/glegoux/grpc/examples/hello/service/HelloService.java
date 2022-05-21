@@ -1,4 +1,4 @@
-package com.glegoux.grpc.examples.hello;
+package com.glegoux.grpc.examples.hello.service;
 
 import com.glegoux.examples.hello.HelloReply;
 import com.glegoux.examples.hello.HelloRequest;

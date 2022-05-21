@@ -1,6 +1,7 @@
-package com.glegoux.grpc.examples.hello;
+package com.glegoux.grpc.examples.hello.server;
 
-import com.glegoux.grpc.GrpcServerSimple;
+import com.glegoux.grpc.server.GrpcServerSimple;
+import com.glegoux.grpc.examples.hello.service.HelloService;
 import com.google.common.collect.Lists;
 import io.grpc.BindableService;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 public class HelloServer {
 
-  public static void main(String[] args) throws IOException, InterruptedException {
+  public static void main(String[] args) throws IOException {
     List<BindableService> services = Lists.newArrayList(new HelloService());
     GrpcServerSimple.run("hello", args, services);
   }
