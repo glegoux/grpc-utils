@@ -93,7 +93,7 @@ public class GrpcServerSimpleArguments {
         } catch (ClassCastException e) {
             throw new ParseException(getExceptionMsg(cmd, longOpt));
         }
-        return (int)port.longValue();
+        return port.intValue();
     }
 
     private String getExceptionMsg(CommandLine cmd, String longOpt) {

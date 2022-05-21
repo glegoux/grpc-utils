@@ -9,14 +9,13 @@ import org.junit.Test;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HelloServiceTest {
-
-    AtomicInteger counter = new AtomicInteger();
-    AtomicInteger counter2 = new AtomicInteger();
-
+    private HelloReply valueOnNext;
+    private HelloReply valueOnCompleted;
     StreamObserver< HelloReply > responseObserver = new StreamObserver<HelloReply>() {
+
         @Override
         public void onNext(HelloReply value) {
-            counter.incrementAndGet();
+            valueOnNext = value;
         }
 
         @Override
@@ -26,21 +25,18 @@ public class HelloServiceTest {
 
         @Override
         public void onCompleted() {
-            counter2.incrementAndGet();
+            valueOnCompleted = valueOnNext;
         }
     };
 
     @Test
     public void test() {
-        //GIVEN
         HelloService helloService = new HelloService();
-        HelloRequest req = HelloRequest.newBuilder().build();
+        HelloRequest req = HelloRequest.newBuilder().setName("world!").build();
 
-        //WHEN
         helloService.sayHello(req, responseObserver);
 
-        //THEN
-        Assertions.assertThat(counter.get()).isEqualTo(1);
-        Assertions.assertThat(counter2.get()).isEqualTo(1);
+        Assertions.assertThat(valueOnNext.getMessage()).isEqualTo("Hello world!");
+        Assertions.assertThat(valueOnCompleted.getMessage()).isEqualTo("Hello world!");
     }
 }

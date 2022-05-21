@@ -20,8 +20,6 @@ plugins {
 def grpcVersion = "1.46.0"
 def protobufVersion = "3.20.1"
 def protocVersion = protobufVersion
-def junitVersion = "4.11"
-
 
 repositories {
     mavenCentral()
@@ -31,7 +29,7 @@ dependencies {
     // gRPC Utils project
     implementation project(path: ':grpc-utils')
     implementation('javax.annotation:javax.annotation-api:1.3.2')
-    testImplementation("junit:junit:${junitVersion}")
+    testImplementation("junit:junit:4.11")
     testImplementation('org.assertj:assertj-core:3.21.0')
 }
 

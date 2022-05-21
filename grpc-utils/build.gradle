@@ -9,7 +9,6 @@ repositories {
 }
 
 def grpcVersion = "1.46.0"
-def junitVersion = "4.11"
 
 
 dependencies {
@@ -24,7 +23,7 @@ dependencies {
     // gRPC monitoring
     implementation("me.dinowernli:java-grpc-prometheus:0.5.0")
     implementation("io.prometheus:simpleclient_httpserver:0.15.0")
-    testImplementation("junit:junit:${junitVersion}")
+    testImplementation("junit:junit:4.11")
     testImplementation('org.assertj:assertj-core:3.21.0')
 
 }
