@@ -1,4 +1,4 @@
-package com.glegoux.grpc;
+package com.glegoux.grpc.server;
 
 import io.grpc.BindableService;
 import io.grpc.Server;
@@ -81,13 +81,20 @@ public class GrpcServerSimple implements GrpcServer {
         }
     }
 
-    public static void run(String programName, String[] args, List<BindableService> services) throws IOException, InterruptedException {
+    public static GrpcServerSimple run(String programName, String[] args, List<BindableService> services) throws IOException {
         GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
         int port = arguments.getPort();
         int monitoringPort = arguments.getMonitoringPort();
         GrpcServerSimple grpcServerSimple = new GrpcServerSimple(port, monitoringPort, services);
         grpcServerSimple.start();
-        grpcServerSimple.blockUntilShutdown();
+        return grpcServerSimple;
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public int getMonitoringPort() {
+        return monitoringPort;
+    }
 }

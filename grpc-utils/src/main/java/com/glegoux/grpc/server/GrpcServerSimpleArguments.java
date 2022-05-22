@@ -1,4 +1,4 @@
-package com.glegoux.grpc;
+package com.glegoux.grpc.server;
 
 
 import org.apache.commons.cli.CommandLine;
@@ -77,20 +77,23 @@ public class GrpcServerSimpleArguments {
         return Option.builder().longOpt(name)
             .hasArg()
             .required(false)
-            .type(Integer.class)
+            .type(Number.class)
             .argName("value")
             .desc(desc)
             .build();
     }
 
     private int checkAndGetPort(CommandLine cmd, String longOpt) throws ParseException {
+        Long port;
         try {
-            Integer port = (Integer) cmd.getParsedOptionValue(longOpt);
-            if (port == null || !(1024 <= port && port <= 65535))
+            port = (Long) cmd.getParsedOptionValue(longOpt);
+            if (port == null || !(1024 <= port && port <= 65535)) {
                 throw new ParseException(getExceptionMsg(cmd, longOpt));
+            }
         } catch (ClassCastException e) {
-            throw new ParseException(getExceptionMsg(cmd, longOpt));        }
-        return port;
+            throw new ParseException(getExceptionMsg(cmd, longOpt));
+        }
+        return port.intValue();
     }
 
     private String getExceptionMsg(CommandLine cmd, String longOpt) {

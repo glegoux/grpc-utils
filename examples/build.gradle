@@ -28,6 +28,9 @@ repositories {
 dependencies {
     // gRPC Utils project
     implementation project(path: ':grpc-utils')
+    implementation('javax.annotation:javax.annotation-api:1.3.2')
+    testImplementation("junit:junit:4.11")
+    testImplementation('org.assertj:assertj-core:3.21.0')
 }
 
 protobuf {

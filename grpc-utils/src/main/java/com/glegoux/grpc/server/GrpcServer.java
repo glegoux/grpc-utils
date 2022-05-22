@@ -1,4 +1,4 @@
-package com.glegoux.grpc;
+package com.glegoux.grpc.server;
 
 import java.io.IOException;
 
