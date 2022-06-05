@@ -5,14 +5,14 @@ buildscript {
         google()
     }
     dependencies {
-        classpath("com.google.protobuf:protobuf-gradle-plugin:${protobufGradle}")
+        classpath("com.google.protobuf:protobuf-gradle-plugin:${protobufGradlePluginVersion}")
     }
 }
 
 plugins {
     id "java"
     id "java-library"
-    id "com.google.protobuf" version "${protobufGradle}"
+    id "com.google.protobuf"
     id "idea"
     id "application"
     id "distribution"
@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     // gRPC Utils project
-    api platform(project(path: ":dependencies"))
+    api platform(project(":dependencies"))
     implementation project(path: ':grpc-utils')
     implementation('javax.annotation:javax.annotation-api')
     testImplementation("junit:junit")

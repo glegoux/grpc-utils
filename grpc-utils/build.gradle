@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    api platform(project(path: ":dependencies"))
+    api platform(project(":dependencies"))
     // command line parser
     implementation("commons-cli:commons-cli")
     // gRPC server
