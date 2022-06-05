@@ -1,3 +1,4 @@
 rootProject.name = 'grpc-utils'
 include 'examples'
 include 'grpc-utils'
+include 'dependencies'
