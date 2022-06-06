@@ -25,7 +25,6 @@ repositories {
 
 dependencies {
     // gRPC Utils project
-    api platform(project(":dependencies"))
     implementation project(path: ':grpc-utils')
     implementation('javax.annotation:javax.annotation-api')
     testImplementation("junit:junit")
