@@ -1,5 +1,4 @@
 plugins {
-    id "java"
     id "java-library"
     id "idea"
 }
@@ -8,22 +7,19 @@ repositories {
     mavenCentral()
 }
 
-def grpcVersion = "1.46.0"
-
-
 dependencies {
+    implementation platform(project(":dependencies"))
     // command line parser
-    implementation("commons-cli:commons-cli:1.5.0")
+    implementation("commons-cli:commons-cli")
     // gRPC server
-    api("io.grpc:grpc-protobuf:${grpcVersion}")
-    api("io.grpc:grpc-stub:${grpcVersion}")
-    api("io.grpc:grpc-services:${grpcVersion}")
-    api("io.grpc:grpc-api:${grpcVersion}")
-    api("io.grpc:grpc-netty-shaded:${grpcVersion}")
+    api("io.grpc:grpc-protobuf")
+    api("io.grpc:grpc-stub")
+    api("io.grpc:grpc-services")
+    api("io.grpc:grpc-api")
+    api("io.grpc:grpc-netty-shaded")
     // gRPC monitoring
-    implementation("me.dinowernli:java-grpc-prometheus:0.5.0")
-    implementation("io.prometheus:simpleclient_httpserver:0.15.0")
-    testImplementation("junit:junit:4.11")
-    testImplementation('org.assertj:assertj-core:3.21.0')
-
+    implementation("me.dinowernli:java-grpc-prometheus")
+    implementation("io.prometheus:simpleclient_httpserver")
+    testImplementation("junit:junit")
+    testImplementation('org.assertj:assertj-core')
 }
