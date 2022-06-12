@@ -27,17 +27,27 @@ public class GrpcServerSimpleTest {
 
         Assertions.assertThat(server.getPort()).isEqualTo(8000);
         Assertions.assertThat(server.getMonitoringPort()).isEqualTo(8001);
+        Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(Runtime.getRuntime().availableProcessors());
     }
 
 
     @Test
-    public void test() throws IOException {
+    public void testPortAndMonitoringPort() throws IOException {
         String[] args = new String[]{"--port", "9090", "--monitoring-port", "9091"};
 
         server = GrpcServerSimple.run("test", args, new ArrayList<>());
 
         Assertions.assertThat(server.getPort()).isEqualTo(9090);
         Assertions.assertThat(server.getMonitoringPort()).isEqualTo(9091);
+        Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(Runtime.getRuntime().availableProcessors());
     }
 
+    @Test
+    public void testNumberOfThreads() throws IOException {
+        String[] args = new String[]{"--number-threads", "4"};
+
+        server = GrpcServerSimple.run("test", args, new ArrayList<>());
+
+        Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(4);
+    }
 }

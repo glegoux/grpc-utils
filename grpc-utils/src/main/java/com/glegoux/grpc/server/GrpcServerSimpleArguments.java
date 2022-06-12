@@ -39,6 +39,9 @@ public class GrpcServerSimpleArguments {
             if (cmd.hasOption("monitoring-port")) {
                 this.monitoringPort = checkAndGetPort(cmd, "monitoring-port");
             }
+            if (cmd.hasOption("number-threads")) {
+                this.numberOfThreads = ((Long) cmd.getParsedOptionValue("number-threads")).intValue();
+            }
         } catch (ParseException exception) {
             LOGGER.warning(String.format("Incorrect server arguments %s", exception));
             System.exit(1);
