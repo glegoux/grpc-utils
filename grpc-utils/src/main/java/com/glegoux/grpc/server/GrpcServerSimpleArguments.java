@@ -15,13 +15,13 @@ public class GrpcServerSimpleArguments {
     private static final Logger LOGGER = Logger.getLogger(GrpcServerSimple.class.getName());
     private static final int DEFAULT_PORT = 8000;
     private static final int DEFAULT_MONITORING_PORT = 8001;
-    private static final int DEFAULT_THREAD = Runtime.getRuntime().availableProcessors();
+    private static final int DEFAULT_NUMBER_OF_THREADS = Runtime.getRuntime().availableProcessors();
 
 
     private final String programName;
     private int port = DEFAULT_PORT;
     private int monitoringPort = DEFAULT_MONITORING_PORT;
-    private int thread = DEFAULT_THREAD;
+    private int numberOfThreads = DEFAULT_NUMBER_OF_THREADS;
 
     public GrpcServerSimpleArguments(String programName, String[] args) {
         this.programName = programName;
@@ -57,8 +57,8 @@ public class GrpcServerSimpleArguments {
         return monitoringPort;
     }
 
-    public int getThread() {
-        return thread;
+    public int getNumberOfThreads() {
+        return numberOfThreads;
     }
 
     private void printUsage(Options options) {
@@ -72,7 +72,7 @@ public class GrpcServerSimpleArguments {
         Option help = new Option("h", "help", false, "print this message");
         Option port = buildOptionWithNumberValue("port", String.format("gRPC server port (default: %d)", DEFAULT_PORT));
         Option monitoringPort = buildOptionWithNumberValue("monitoring-port", String.format("monitoring server port for prometheus exporter of gRPC metrics (default: %d)", DEFAULT_MONITORING_PORT));
-        Option numberOfThread = buildOptionWithNumberValue("thread", String.format("number of threads to process gRPC incoming requests (default: %d)", DEFAULT_THREAD));
+        Option numberOfThread = buildOptionWithNumberValue("number-threads", String.format("number of threads to process gRPC incoming requests (default: %d)", DEFAULT_NUMBER_OF_THREADS));
         options.addOption(help);
         options.addOption(port);
         options.addOption(monitoringPort);

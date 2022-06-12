@@ -1,6 +1,10 @@
 package com.glegoux.grpc.server;
 
-import io.grpc.*;
+import io.grpc.BindableService;
+import io.grpc.Metadata;
+import io.grpc.Server;
+import io.grpc.ServerCall;
+import io.grpc.ServerCallExecutorSupplier;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
@@ -108,7 +112,7 @@ public class GrpcServerSimple implements GrpcServer {
         GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
         int port = arguments.getPort();
         int monitoringPort = arguments.getMonitoringPort();
-        int numberOfThreads = arguments.getThread();
+        int numberOfThreads = arguments.getNumberOfThreads();
         GrpcServerSimple grpcServerSimple = new GrpcServerSimple(port, monitoringPort, numberOfThreads, services);
         grpcServerSimple.start();
         return grpcServerSimple;
