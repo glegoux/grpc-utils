@@ -1,16 +1,23 @@
 package com.glegoux.grpc.server;
 
 import io.grpc.BindableService;
+import io.grpc.Metadata;
 import io.grpc.Server;
+import io.grpc.ServerCall;
+import io.grpc.ServerCallExecutorSupplier;
+import io.grpc.health.v1.HealthGrpc;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import io.grpc.protobuf.services.HealthStatusManager;
 import io.grpc.protobuf.services.ProtoReflectionService;
+import io.grpc.reflection.v1alpha.ServerReflectionGrpc;
 import io.prometheus.client.exporter.HTTPServer;
 import me.dinowernli.grpc.prometheus.Configuration;
 import me.dinowernli.grpc.prometheus.MonitoringServerInterceptor;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -23,13 +30,15 @@ public class GrpcServerSimple implements GrpcServer {
 
     private final int port;
     private final int monitoringPort;
+    private final int numberOfThreads;
     private final List<BindableService> services;
 
 
-    public GrpcServerSimple(int port, int monitoringPort, List<BindableService> services) {
+    public GrpcServerSimple(int port, int monitoringPort, int numberOfThreads, List<BindableService> services) {
         this.port = port;
         this.monitoringPort = monitoringPort;
         this.services = services;
+        this.numberOfThreads = numberOfThreads;
     }
 
     @Override
@@ -37,7 +46,25 @@ public class GrpcServerSimple implements GrpcServer {
 
         MonitoringServerInterceptor monitoringInterceptor = MonitoringServerInterceptor.create(Configuration.allMetrics());
 
+        ThreadPoolExecutor healthServiceThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(1, "grpc-health-service");
+        ThreadPoolExecutor reflectionServiceThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(1, "reflection-service");
+        ThreadPoolExecutor servicesThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(this.numberOfThreads, "grpc-services");
+
         NettyServerBuilder serverBuilder = NettyServerBuilder.forPort(this.port)
+                .callExecutor(new ServerCallExecutorSupplier() {
+                    @Override
+                    public <ReqT, RespT> Executor getExecutor(ServerCall<ReqT, RespT> call, Metadata metadata) {
+                        String serviceName = call.getMethodDescriptor().getServiceName();
+                        if (serviceName != null) {
+                            if (serviceName.equals(HealthGrpc.SERVICE_NAME)) {
+                                return healthServiceThreadPoolExecutor;
+                            } else if (serviceName.equals(ServerReflectionGrpc.SERVICE_NAME)) {
+                                return reflectionServiceThreadPoolExecutor;
+                            }
+                        }
+                        return servicesThreadPoolExecutor;
+                    }
+                })
                 .intercept(monitoringInterceptor)
                 .addService(new HealthStatusManager().getHealthService())
                 .addService(ProtoReflectionService.newInstance());
@@ -85,7 +112,8 @@ public class GrpcServerSimple implements GrpcServer {
         GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
         int port = arguments.getPort();
         int monitoringPort = arguments.getMonitoringPort();
-        GrpcServerSimple grpcServerSimple = new GrpcServerSimple(port, monitoringPort, services);
+        int numberOfThreads = arguments.getNumberOfThreads();
+        GrpcServerSimple grpcServerSimple = new GrpcServerSimple(port, monitoringPort, numberOfThreads, services);
         grpcServerSimple.start();
         return grpcServerSimple;
     }
@@ -96,5 +124,9 @@ public class GrpcServerSimple implements GrpcServer {
 
     public int getMonitoringPort() {
         return monitoringPort;
+    }
+
+    public int getNumberOfThreads() {
+        return numberOfThreads;
     }
 }
