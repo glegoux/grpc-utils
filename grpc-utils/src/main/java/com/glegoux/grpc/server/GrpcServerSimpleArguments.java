@@ -13,9 +13,9 @@ import java.util.logging.Logger;
 
 public class GrpcServerSimpleArguments {
     private static final Logger LOGGER = Logger.getLogger(GrpcServerSimple.class.getName());
-    private static final int DEFAULT_PORT = 8000;
-    private static final int DEFAULT_MONITORING_PORT = 8001;
-    private static final int DEFAULT_NUMBER_OF_THREADS = Runtime.getRuntime().availableProcessors();
+    static final int DEFAULT_PORT = 8000;
+    static final int DEFAULT_MONITORING_PORT = 8001;
+    static final int DEFAULT_NUMBER_OF_THREADS = Runtime.getRuntime().availableProcessors();
 
 
     private final String programName;

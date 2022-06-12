@@ -8,6 +8,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.glegoux.grpc.server.GrpcServerSimpleArguments.DEFAULT_MONITORING_PORT;
+import static com.glegoux.grpc.server.GrpcServerSimpleArguments.DEFAULT_NUMBER_OF_THREADS;
+import static com.glegoux.grpc.server.GrpcServerSimpleArguments.DEFAULT_PORT;
+
 public class GrpcServerSimpleTest {
 
     private GrpcServerSimple server;
@@ -25,9 +29,9 @@ public class GrpcServerSimpleTest {
 
         server = GrpcServerSimple.run("test", args, new ArrayList<>());
 
-        Assertions.assertThat(server.getPort()).isEqualTo(8000);
-        Assertions.assertThat(server.getMonitoringPort()).isEqualTo(8001);
-        Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(Runtime.getRuntime().availableProcessors());
+        Assertions.assertThat(server.getPort()).isEqualTo(DEFAULT_PORT);
+        Assertions.assertThat(server.getMonitoringPort()).isEqualTo(DEFAULT_MONITORING_PORT);
+        Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(DEFAULT_NUMBER_OF_THREADS);
     }
 
 
@@ -39,7 +43,7 @@ public class GrpcServerSimpleTest {
 
         Assertions.assertThat(server.getPort()).isEqualTo(9090);
         Assertions.assertThat(server.getMonitoringPort()).isEqualTo(9091);
-        Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(Runtime.getRuntime().availableProcessors());
+        Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(DEFAULT_NUMBER_OF_THREADS);
     }
 
     @Test
@@ -48,6 +52,8 @@ public class GrpcServerSimpleTest {
 
         server = GrpcServerSimple.run("test", args, new ArrayList<>());
 
+        Assertions.assertThat(server.getPort()).isEqualTo(DEFAULT_PORT);
+        Assertions.assertThat(server.getMonitoringPort()).isEqualTo(DEFAULT_MONITORING_PORT);
         Assertions.assertThat(server.getNumberOfThreads()).isEqualTo(4);
     }
 }
