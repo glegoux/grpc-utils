@@ -15,10 +15,13 @@ public class GrpcServerSimpleArguments {
     private static final Logger LOGGER = Logger.getLogger(GrpcServerSimple.class.getName());
     private static final int DEFAULT_PORT = 8000;
     private static final int DEFAULT_MONITORING_PORT = 8001;
+    private static final int DEFAULT_THREAD = Runtime.getRuntime().availableProcessors();
+
 
     private final String programName;
     private int port = DEFAULT_PORT;
     private int monitoringPort = DEFAULT_MONITORING_PORT;
+    private int thread = DEFAULT_THREAD;
 
     public GrpcServerSimpleArguments(String programName, String[] args) {
         this.programName = programName;
@@ -54,6 +57,10 @@ public class GrpcServerSimpleArguments {
         return monitoringPort;
     }
 
+    public int getThread() {
+        return thread;
+    }
+
     private void printUsage(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         String description = String.format("Run a gRPC server%n%n");
@@ -63,17 +70,17 @@ public class GrpcServerSimpleArguments {
     private Options buildOptions() {
         Options options = new Options();
         Option help = new Option("h", "help", false, "print this message");
-        Option port = getPort("port", String.format("gRPC server port (default: %d)", DEFAULT_PORT));
-        Option monitoringPort = getPort("monitoring-port",
-            String.format("monitoring server port for prometheus exporter of gRPC metrics (default: %d)",
-            DEFAULT_MONITORING_PORT));
+        Option port = buildOptionWithNumberValue("port", String.format("gRPC server port (default: %d)", DEFAULT_PORT));
+        Option monitoringPort = buildOptionWithNumberValue("monitoring-port", String.format("monitoring server port for prometheus exporter of gRPC metrics (default: %d)", DEFAULT_MONITORING_PORT));
+        Option numberOfThread = buildOptionWithNumberValue("thread", String.format("number of threads to process gRPC incoming requests (default: %d)", DEFAULT_THREAD));
         options.addOption(help);
         options.addOption(port);
         options.addOption(monitoringPort);
+        options.addOption(numberOfThread);
         return options;
     }
 
-    private Option getPort(String name, String desc) {
+    private Option buildOptionWithNumberValue(String name, String desc) {
         return Option.builder().longOpt(name)
             .hasArg()
             .required(false)
