@@ -16,6 +16,7 @@ plugins {
     id "idea"
     id "application"
     id "distribution"
+    id "jacoco"
 }
 
 
@@ -46,6 +47,14 @@ protobuf {
             grpc {}
         }
     }
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
 }
 
 application {
