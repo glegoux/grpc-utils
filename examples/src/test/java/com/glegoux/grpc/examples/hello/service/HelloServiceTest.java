@@ -2,41 +2,47 @@ package com.glegoux.grpc.examples.hello.service;
 
 import com.glegoux.examples.hello.HelloReply;
 import com.glegoux.examples.hello.HelloRequest;
-import io.grpc.stub.StreamObserver;
+import com.glegoux.examples.hello.HelloServiceGrpc;
+import io.grpc.ManagedChannel;
+import io.grpc.inprocess.InProcessChannelBuilder;
+import io.grpc.inprocess.InProcessServerBuilder;
+import io.grpc.testing.GrpcCleanupRule;
 import org.assertj.core.api.Assertions;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class HelloServiceTest {
-    private HelloReply valueOnNext;
-    private HelloReply valueOnCompleted;
-    StreamObserver< HelloReply > responseObserver = new StreamObserver<HelloReply>() {
 
-        @Override
-        public void onNext(HelloReply value) {
-            valueOnNext = value;
-        }
+    @Rule
+    public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
 
-        @Override
-        public void onError(Throwable t) {
-            throw new RuntimeException();
-        }
+    private HelloServiceGrpc.HelloServiceBlockingStub client;
 
-        @Override
-        public void onCompleted() {
-            valueOnCompleted = valueOnNext;
-        }
-    };
+    @Before
+    public void setUp() throws Exception {
+        String serverName = InProcessServerBuilder.generateName();
+
+        grpcCleanup.register(InProcessServerBuilder
+                .forName(serverName).directExecutor().addService(new HelloService()).build().start());
+
+        ManagedChannel channel = grpcCleanup.register(
+                InProcessChannelBuilder.forName(serverName).directExecutor().build());
+
+        client = HelloServiceGrpc.newBlockingStub(channel);
+    }
 
     @Test
-    public void test() {
-        HelloService helloService = new HelloService();
+    public void testSayHello() {
         HelloRequest req = HelloRequest.newBuilder().setName("world!").build();
 
-        helloService.sayHello(req, responseObserver);
+        HelloReply rep = this.client.sayHello(req);
 
-        Assertions.assertThat(valueOnNext.getMessage()).isEqualTo("Hello world!");
-        Assertions.assertThat(valueOnCompleted.getMessage()).isEqualTo("Hello world!");
+        Assertions.assertThat(rep.getMessage()).isEqualTo("Hello world!");
+    }
+
+    @Test
+    public void testHello() {
+        Assertions.assertThat(HelloService.hello("world!")).isEqualTo("Hello world!");
     }
 }
