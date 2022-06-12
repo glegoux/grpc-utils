@@ -16,5 +16,6 @@ dependencies {
         api('javax.annotation:javax.annotation-api:1.3.2')
         api('org.assertj:assertj-core:3.21.0')
         api("com.google.protobuf:protoc:${protocVersion}")
+        api("io.grpc:grpc-testing:${grpcVersion}")
     }
 }

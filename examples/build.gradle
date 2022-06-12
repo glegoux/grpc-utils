@@ -31,6 +31,8 @@ dependencies {
     implementation('javax.annotation:javax.annotation-api')
     testImplementation("junit:junit")
     testImplementation('org.assertj:assertj-core')
+    testImplementation("junit:junit")
+    testImplementation("io.grpc:grpc-testing")
 }
 
 protobuf {
