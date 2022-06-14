@@ -2,25 +2,35 @@ package com.glegoux.grpc.server;
 
 import io.prometheus.client.Gauge;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class GrpcThreadPoolMetrics {
 
     public static void build(ThreadPoolExecutor threadPool, String threadPoolName) {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(() -> {
-                    POOL_SIZE_GAUGE.labels(threadPoolName).set(threadPool.getPoolSize());
-                    ACTIVE_TASK_GAUGE.labels(threadPoolName).set(threadPool.getActiveCount());
-                    SCHEDULED_TASK_GAUGE.labels(threadPoolName).set(threadPool.getTaskCount());
-                    AWAITING_TASK_GAUGE.labels(threadPoolName).set(threadPool.getQueue().size());
-                },
-                0,
-                1,
-                TimeUnit.SECONDS
-        );
+        POOL_SIZE_GAUGE.setChild(new Gauge.Child() {
+            @Override
+            public double get() {
+                return threadPool.getPoolSize();
+            }
+        }, threadPoolName);
+        ACTIVE_TASK_GAUGE.setChild(new Gauge.Child() {
+            @Override
+            public double get() {
+                return threadPool.getActiveCount();
+            }
+        }, threadPoolName);
+        SCHEDULED_TASK_GAUGE.setChild(new Gauge.Child() {
+            @Override
+            public double get() {
+                return threadPool.getTaskCount();
+            }
+        }, threadPoolName);
+        AWAITING_TASK_GAUGE.setChild(new Gauge.Child() {
+            @Override
+            public double get() {
+                return threadPool.getQueue().size();
+            }
+        }, threadPoolName);
     }
 
     private static final Gauge POOL_SIZE_GAUGE = Gauge.build()
