@@ -122,8 +122,4 @@ public class GrpcServerSimple implements GrpcServer {
         return numberOfThreads;
     }
 
-    public List<BindableService> getServices() {
-        return services;
-    }
-
 }
