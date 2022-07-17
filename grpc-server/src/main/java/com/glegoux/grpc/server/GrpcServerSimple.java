@@ -101,13 +101,6 @@ public class GrpcServerSimple implements GrpcServer {
         }
     }
 
-    @Override
-    public void blockUntilShutdown() throws InterruptedException {
-        if (this.server != null) {
-            this.server.awaitTermination();
-        }
-    }
-
     public static GrpcServerSimple run(String programName, String[] args, List<BindableService> services) throws IOException {
         GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
         int port = arguments.getPort();
