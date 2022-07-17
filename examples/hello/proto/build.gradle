@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.google.protobuf:protobuf-gradle-plugin:${protobufGradlePluginVersion}")
+    }
+}
+
+plugins {
+    id "idea"
+    id "java-library"
+    id "com.google.protobuf"
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform(project(":dependencies"))
+    api("io.grpc:grpc-protobuf")
+    api("io.grpc:grpc-stub")
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protocVersion}"
+    }
+
+    plugins {
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}" }
+    }
+
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}

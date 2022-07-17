@@ -1,0 +1,27 @@
+plugins {
+    id "idea"
+    id "java-library"
+    id "jacoco"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(platform(project(":dependencies")))
+    api(project(":grpc-client"))
+    api(project(":examples:hello:proto"))
+    // test
+    testImplementation("junit:junit")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("io.grpc:grpc-testing")
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+}

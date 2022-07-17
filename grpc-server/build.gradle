@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation platform(project(":dependencies"))
+    implementation(platform(project(":dependencies")))
     // command line parser
     implementation("commons-cli:commons-cli")
     // gRPC
