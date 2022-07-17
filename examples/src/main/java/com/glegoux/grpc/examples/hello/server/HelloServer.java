@@ -1,7 +1,7 @@
 package com.glegoux.grpc.examples.hello.server;
 
 import com.glegoux.grpc.server.GrpcServerSimple;
-import com.glegoux.grpc.examples.hello.service.HelloService;
+import com.glegoux.grpc.examples.hello.server.service.HelloService;
 import com.google.common.collect.Lists;
 import io.grpc.BindableService;
 

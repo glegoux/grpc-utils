@@ -1,4 +1,4 @@
-package com.glegoux.grpc.examples.hello.service;
+package com.glegoux.grpc.examples.hello.server.service;
 
 import com.glegoux.examples.hello.HelloReply;
 import com.glegoux.examples.hello.HelloRequest;
@@ -23,11 +23,20 @@ public class HelloServiceTest {
     public void setUp() throws Exception {
         String serverName = InProcessServerBuilder.generateName();
 
-        grpcCleanup.register(InProcessServerBuilder
-                .forName(serverName).directExecutor().addService(new HelloService()).build().start());
+        grpcCleanup.register(
+                InProcessServerBuilder
+                        .forName(serverName)
+                        .directExecutor()
+                        .addService(new HelloService())
+                        .build().start()
+        );
 
         ManagedChannel channel = grpcCleanup.register(
-                InProcessChannelBuilder.forName(serverName).directExecutor().build());
+                InProcessChannelBuilder
+                        .forName(serverName)
+                        .directExecutor()
+                        .build()
+        );
 
         client = HelloServiceGrpc.newBlockingStub(channel);
     }
@@ -35,9 +44,7 @@ public class HelloServiceTest {
     @Test
     public void testSayHello() {
         HelloRequest req = HelloRequest.newBuilder().setName("world!").build();
-
         HelloReply rep = this.client.sayHello(req);
-
         Assertions.assertThat(rep.getMessage()).isEqualTo("Hello world!");
     }
 
