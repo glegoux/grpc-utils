@@ -25,13 +25,12 @@ repositories {
 }
 
 dependencies {
-    // gRPC Utils project
     implementation platform(project(":dependencies"))
-    implementation project(':grpc-utils')
-    implementation('javax.annotation:javax.annotation-api')
+    implementation project(":grpc-server")
+    implementation project(":grpc-client")
+    // test
     testImplementation("junit:junit")
-    testImplementation('org.assertj:assertj-core')
-    testImplementation("junit:junit")
+    testImplementation("org.assertj:assertj-core")
     testImplementation("io.grpc:grpc-testing")
 }
 

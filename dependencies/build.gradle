@@ -4,18 +4,23 @@ plugins {
 
 dependencies {
     constraints {
+        // command line
         api("commons-cli:commons-cli:1.5.0")
+        // grpc
         api("io.grpc:grpc-protobuf:${grpcVersion}")
+        api("io.grpc:gprc-core:${grpcVersion}")
         api("io.grpc:grpc-stub:${grpcVersion}")
         api("io.grpc:grpc-services:${grpcVersion}")
         api("io.grpc:grpc-api:${grpcVersion}")
         api("io.grpc:grpc-netty-shaded:${grpcVersion}")
+        api("io.grpc:grpc-testing:${grpcVersion}")
+        // monitoring metrics
         api("me.dinowernli:java-grpc-prometheus:0.5.0")
         api("io.prometheus:simpleclient_httpserver:0.15.0")
+        // test
         api("junit:junit:4.11")
         api('javax.annotation:javax.annotation-api:1.3.2')
         api('org.assertj:assertj-core:3.21.0')
         api("com.google.protobuf:protoc:${protocVersion}")
-        api("io.grpc:grpc-testing:${grpcVersion}")
     }
 }

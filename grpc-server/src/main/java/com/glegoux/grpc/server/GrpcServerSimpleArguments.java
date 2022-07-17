@@ -1,5 +1,6 @@
 package com.glegoux.grpc.server;
 
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -15,6 +16,7 @@ public class GrpcServerSimpleArguments {
     static final int DEFAULT_PORT = 8000;
     static final int DEFAULT_MONITORING_PORT = 8001;
     static final int DEFAULT_NUMBER_OF_THREADS = Runtime.getRuntime().availableProcessors();
+
 
     private final String programName;
     private int port = DEFAULT_PORT;
@@ -95,16 +97,16 @@ public class GrpcServerSimpleArguments {
         Long port;
         try {
             port = (Long) cmd.getParsedOptionValue(longOpt);
-        } catch (ParseException | ClassCastException e) {
-            throw new ParseException(getParseExceptionMsgForPort(cmd, longOpt));
-        }
-        if (port == null || !(1024 <= port && port <= 65535)) {
-            throw new ParseException(getParseExceptionMsgForPort(cmd, longOpt));
+            if (port == null || !(1024 <= port && port <= 65535)) {
+                throw new ParseException(getExceptionMsg(cmd, longOpt));
+            }
+        } catch (ClassCastException e) {
+            throw new ParseException(getExceptionMsg(cmd, longOpt));
         }
         return port.intValue();
     }
 
-    private String getParseExceptionMsgForPort(CommandLine cmd, String longOpt) {
+    private String getExceptionMsg(CommandLine cmd, String longOpt) {
         return String.format(
             "Failed to get the value `%s` of the option --%s must be an integer between 1024 and 65535",
             cmd.getOptionValue(longOpt), longOpt);

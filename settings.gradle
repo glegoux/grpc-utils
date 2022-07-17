@@ -5,6 +5,7 @@ pluginManagement {
 }
 
 rootProject.name = 'grpc-utils'
-include 'examples'
-include 'grpc-utils'
 include 'dependencies'
+include 'grpc-server'
+include 'grpc-client'
+include 'examples'

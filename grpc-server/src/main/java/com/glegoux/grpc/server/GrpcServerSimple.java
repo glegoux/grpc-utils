@@ -33,11 +33,12 @@ public class GrpcServerSimple implements GrpcServer {
     private final int numberOfThreads;
     private final List<BindableService> services;
 
+
     public GrpcServerSimple(int port, int monitoringPort, int numberOfThreads, List<BindableService> services) {
         this.port = port;
         this.monitoringPort = monitoringPort;
-        this.numberOfThreads = numberOfThreads;
         this.services = services;
+        this.numberOfThreads = numberOfThreads;
     }
 
     @Override
@@ -45,9 +46,9 @@ public class GrpcServerSimple implements GrpcServer {
 
         MonitoringServerInterceptor monitoringInterceptor = MonitoringServerInterceptor.create(Configuration.allMetrics());
 
-        ThreadPoolExecutor healthServiceThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(1, "health-service");
+        ThreadPoolExecutor healthServiceThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(1, "grpc-health-service");
         ThreadPoolExecutor reflectionServiceThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(1, "reflection-service");
-        ThreadPoolExecutor servicesThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(this.numberOfThreads, "services");
+        ThreadPoolExecutor servicesThreadPoolExecutor = GrpcThreadPoolHelper.newFixedThreadPool(this.numberOfThreads, "grpc-services");
 
         NettyServerBuilder serverBuilder = NettyServerBuilder.forPort(this.port)
                 .callExecutor(new ServerCallExecutorSupplier() {
@@ -100,6 +101,13 @@ public class GrpcServerSimple implements GrpcServer {
         }
     }
 
+    @Override
+    public void blockUntilShutdown() throws InterruptedException {
+        if (this.server != null) {
+            this.server.awaitTermination();
+        }
+    }
+
     public static GrpcServerSimple run(String programName, String[] args, List<BindableService> services) throws IOException {
         GrpcServerSimpleArguments arguments = new GrpcServerSimpleArguments(programName, args);
         int port = arguments.getPort();
@@ -121,5 +129,4 @@ public class GrpcServerSimple implements GrpcServer {
     public int getNumberOfThreads() {
         return numberOfThreads;
     }
-
 }
